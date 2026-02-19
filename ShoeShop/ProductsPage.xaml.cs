@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,7 +46,7 @@ namespace ShoeShop
 
                 var cats = db.Categories.ToList();
                 cmbCat.Items.Clear();
-                cmbCat.Items.Add(new ComboBoxItem { Content = "All", IsSelected = true });
+                cmbCat.Items.Add(new ComboBoxItem { Content = "Все", IsSelected = true });
                 foreach (var c in cats)
                 {
                     cmbCat.Items.Add(new ComboBoxItem { Content = c.CategoryName, Tag = c.CategoryID });
@@ -85,23 +85,12 @@ namespace ShoeShop
 
             var list = res.ToList();
             lvProducts.ItemsSource = list;
-            txtCount.Text = "Shown: " + list.Count + " of " + allProducts.Count;
+            txtCount.Text = "Показано: " + list.Count + " из " + allProducts.Count;
         }
 
-        private void TxtSearch_Changed(object sender, TextChangedEventArgs e)
-        {
-            Filter();
-        }
-
-        private void CmbSort_Changed(object sender, SelectionChangedEventArgs e)
-        {
-            Filter();
-        }
-
-        private void CmbCat_Changed(object sender, SelectionChangedEventArgs e)
-        {
-            Filter();
-        }
+        private void TxtSearch_Changed(object sender, TextChangedEventArgs e) { Filter(); }
+        private void CmbSort_Changed(object sender, SelectionChangedEventArgs e) { Filter(); }
+        private void CmbCat_Changed(object sender, SelectionChangedEventArgs e) { Filter(); }
 
         private void LvProducts_Changed(object sender, SelectionChangedEventArgs e)
         {
@@ -116,8 +105,7 @@ namespace ShoeShop
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             ProductEditWindow w = new ProductEditWindow(null);
-            if (w.ShowDialog() == true)
-                LoadData();
+            if (w.ShowDialog() == true) LoadData();
         }
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
@@ -126,8 +114,7 @@ namespace ShoeShop
             if (p != null)
             {
                 ProductEditWindow w = new ProductEditWindow(p);
-                if (w.ShowDialog() == true)
-                    LoadData();
+                if (w.ShowDialog() == true) LoadData();
             }
         }
 
@@ -136,16 +123,12 @@ namespace ShoeShop
             Product p = lvProducts.SelectedItem as Product;
             if (p != null)
             {
-                if (MessageBox.Show("Delete?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (MessageBox.Show("Удалить?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     using (var db = new ShoeShopContext())
                     {
                         var pr = db.Products.Find(p.ProductID);
-                        if (pr != null)
-                        {
-                            db.Products.Remove(pr);
-                            db.SaveChanges();
-                        }
+                        if (pr != null) { db.Products.Remove(pr); db.SaveChanges(); }
                     }
                     LoadData();
                 }

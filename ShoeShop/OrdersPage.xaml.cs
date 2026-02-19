@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,7 +16,7 @@ namespace ShoeShop
         private void Setup()
         {
             User u = LoginWindow.CurrentUser;
-            if (u != null && u.RoleID == 1)
+            if (u != null && (u.RoleID == 1 || u.RoleID == 2))
             {
                 pnlAdmin.Visibility = Visibility.Visible;
             }
@@ -34,14 +34,14 @@ namespace ShoeShop
                     .ToList();
 
                 dgOrders.ItemsSource = list;
-                txtCount.Text = "Total: " + list.Count;
+                txtCount.Text = "Всего: " + list.Count;
             }
         }
 
         private void DgOrders_Changed(object sender, SelectionChangedEventArgs e)
         {
             User u = LoginWindow.CurrentUser;
-            if (u != null && u.RoleID == 1)
+            if (u != null && (u.RoleID == 1 || u.RoleID == 2))
             {
                 bool sel = dgOrders.SelectedItem != null;
                 btnEdit.Visibility = sel ? Visibility.Visible : Visibility.Collapsed;
@@ -51,7 +51,8 @@ namespace ShoeShop
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Add order");
+            AddOrderWindow w = new AddOrderWindow();
+            if (w.ShowDialog() == true) LoadData();
         }
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
@@ -59,7 +60,7 @@ namespace ShoeShop
             Order o = dgOrders.SelectedItem as Order;
             if (o != null)
             {
-                MessageBox.Show("Edit order " + o.OrderNumber);
+                MessageBox.Show("Редактирование заказа №" + o.OrderNumber);
             }
         }
 
@@ -68,19 +69,14 @@ namespace ShoeShop
             Order o = dgOrders.SelectedItem as Order;
             if (o != null)
             {
-                if (MessageBox.Show("Delete?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (MessageBox.Show("Удалить?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     using (var db = new ShoeShopContext())
                     {
                         var items = db.OrderItems.Where(i => i.OrderID == o.OrderID);
                         db.OrderItems.RemoveRange(items);
-
                         var ord = db.Orders.Find(o.OrderID);
-                        if (ord != null)
-                        {
-                            db.Orders.Remove(ord);
-                            db.SaveChanges();
-                        }
+                        if (ord != null) { db.Orders.Remove(ord); db.SaveChanges(); }
                     }
                     LoadData();
                 }

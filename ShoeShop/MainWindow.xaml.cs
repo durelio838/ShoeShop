@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace ShoeShop
 {
@@ -17,7 +17,7 @@ namespace ShoeShop
 
             if (user == null)
             {
-                txtUserInfo.Text = "Guest";
+                txtUserInfo.Text = "Гость";
                 btnOrders.Visibility = Visibility.Collapsed;
             }
             else
